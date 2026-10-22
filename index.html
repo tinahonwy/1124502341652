@@ -14,6 +14,9 @@
     --line: #e6e1da;
     --accent: #7a8f7b;
     --accent-2: #c49a7a;
+    --plus: #6f9a72;
+    --minus: #c07070;
+    --mid: #c9a85c;
     --danger: #b65c5c;
     --radius: 14px;
   }
@@ -26,6 +29,9 @@
       --line: #3a3936;
       --accent: #9db39e;
       --accent-2: #d8b294;
+      --plus: #8fbf92;
+      --minus: #d98a8a;
+      --mid: #d9bd7a;
       --danger: #d98080;
     }
   }
@@ -40,7 +46,6 @@
   .wrap { max-width: 760px; margin: 0 auto; padding: 24px 16px 80px; }
   .hidden { display: none !important; }
 
-  /* Login */
   #login {
     min-height: 100vh; display: flex; flex-direction: column;
     align-items: center; justify-content: center; gap: 20px; padding: 16px;
@@ -48,7 +53,6 @@
   #login h1 { font-weight: 600; letter-spacing: 0.05em; margin: 0; }
   #login p { color: var(--muted); margin: 0; }
 
-  /* Header */
   header {
     display: flex; align-items: center; justify-content: space-between;
     gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
@@ -57,23 +61,22 @@
   .user { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--muted); }
   .user img { width: 28px; height: 28px; border-radius: 50%; }
 
-  /* Buttons */
   button {
     font: inherit; cursor: pointer; border: 1px solid var(--line);
     background: var(--card); color: var(--text);
     padding: 8px 14px; border-radius: 10px; transition: opacity .15s;
   }
-  button:hover { opacity: 0.8; }
+  button:hover { opacity: 0.85; }
+  button:disabled { opacity: 0.5; cursor: default; }
   button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
   button.danger { color: var(--danger); }
   button.small { padding: 4px 10px; font-size: 0.85rem; }
   .google-btn { display: flex; align-items: center; gap: 10px; padding: 10px 18px; }
 
-  /* Tabs */
-  nav { display: flex; gap: 6px; margin-bottom: 18px; border-bottom: 1px solid var(--line); }
+  nav { display: flex; gap: 2px; margin-bottom: 18px; border-bottom: 1px solid var(--line); overflow-x: auto; }
   nav button {
-    border: none; background: transparent; border-radius: 0;
-    padding: 10px 14px; color: var(--muted); border-bottom: 2px solid transparent;
+    border: none; background: transparent; border-radius: 0; white-space: nowrap;
+    padding: 10px 12px; color: var(--muted); border-bottom: 2px solid transparent;
   }
   nav button.active { color: var(--text); border-bottom-color: var(--accent); }
 
@@ -84,42 +87,63 @@
   .card h2 { margin: 0 0 4px; font-size: 1.05rem; }
   .card .sub { color: var(--muted); font-size: 0.85rem; margin: 0 0 14px; }
 
-  label.field { display: block; font-size: 0.9rem; margin-bottom: 6px; color: var(--muted); }
+  label.field { display: block; font-size: 0.9rem; margin: 12px 0 6px; color: var(--muted); }
+  label.field:first-of-type { margin-top: 0; }
   input[type="date"], textarea {
     width: 100%; font: inherit; color: var(--text); background: var(--bg);
     border: 1px solid var(--line); border-radius: 10px; padding: 10px;
   }
-  textarea { min-height: 100px; resize: vertical; }
+  textarea { min-height: 90px; resize: vertical; }
 
-  /* Dimension rows */
-  .dim { padding: 12px 0; border-bottom: 1px dashed var(--line); }
-  .dim:last-child { border-bottom: none; }
-  .dim-head { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
-  .dim-name { font-weight: 600; }
-  .dim-hint { color: var(--muted); font-size: 0.85rem; }
-  .scale { display: flex; gap: 6px; margin-top: 8px; }
-  .scale input { display: none; }
-  .scale label {
-    flex: 1; text-align: center; padding: 6px 0; border-radius: 8px;
-    border: 1px solid var(--line); cursor: pointer; font-size: 0.9rem; user-select: none;
+  /* 加分 / 扣分 切換 */
+  .sign-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .sign-toggle button { padding: 14px; font-size: 1rem; }
+  .sign-toggle button.on-plus { background: var(--plus); border-color: var(--plus); color: #fff; }
+  .sign-toggle button.on-minus { background: var(--minus); border-color: var(--minus); color: #fff; }
+
+  /* 面向 chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips button { padding: 5px 12px; font-size: 0.88rem; border-radius: 999px; }
+  .chips button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* 敘述題 */
+  .dim-group { padding: 10px 0 4px; border-top: 1px dashed var(--line); }
+  .dim-group:first-child { border-top: none; padding-top: 0; }
+  .dim-title { font-weight: 600; font-size: 0.9rem; color: var(--accent); margin-bottom: 4px; }
+  .stmt { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 0; }
+  .stmt-text { flex: 1; font-size: 0.95rem; }
+  .tri { display: flex; gap: 4px; flex-shrink: 0; }
+  .tri input { display: none; }
+  .tri label {
+    padding: 4px 10px; border: 1px solid var(--line); border-radius: 8px;
+    font-size: 0.85rem; cursor: pointer; user-select: none;
   }
-  .scale input:checked + label { background: var(--accent); color: #fff; border-color: var(--accent); }
-  .scale-legend { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+  .tri input[value="2"]:checked + label { background: var(--plus); border-color: var(--plus); color: #fff; }
+  .tri input[value="1"]:checked + label { background: var(--mid); border-color: var(--mid); color: #fff; }
+  .tri input[value="0"]:checked + label { background: var(--minus); border-color: var(--minus); color: #fff; }
+  @media (max-width: 520px) {
+    .stmt { flex-direction: column; align-items: stretch; gap: 6px; }
+    .tri label { flex: 1; text-align: center; }
+  }
 
-  /* Slider */
   .slider-row { display: flex; align-items: center; gap: 14px; }
   input[type="range"] { flex: 1; accent-color: var(--accent-2); }
   .big-num { font-size: 1.6rem; font-weight: 600; min-width: 64px; text-align: right; color: var(--accent-2); }
+  .scale-legend { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
 
   .prompt-box {
     background: var(--bg); border-radius: 10px; padding: 12px 14px; margin-bottom: 10px;
     display: flex; justify-content: space-between; gap: 10px; align-items: flex-start;
   }
   .prompt-text { font-weight: 500; }
+  .hint { font-size: 0.85rem; color: var(--muted); background: var(--bg); border-radius: 10px; padding: 10px 14px; margin-bottom: 16px; }
 
-  .actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+  .actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 12px; }
 
-  /* History */
+  /* 列表 */
+  .filter { display: flex; gap: 8px; margin-bottom: 14px; }
+  .filter button { padding: 4px 12px; font-size: 0.88rem; border-radius: 999px; }
+  .filter button.on { background: var(--text); color: var(--bg); border-color: var(--text); }
   .entry { cursor: pointer; }
   .entry-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
   .entry-date { font-weight: 600; }
@@ -127,31 +151,41 @@
     font-size: 0.8rem; padding: 2px 10px; border-radius: 999px;
     background: var(--bg); border: 1px solid var(--line); white-space: nowrap;
   }
+  .sign { display: inline-flex; width: 22px; height: 22px; border-radius: 50%; align-items: center; justify-content: center;
+    color: #fff; font-size: 0.9rem; font-weight: 700; margin-right: 8px; vertical-align: middle; }
+  .sign.plus { background: var(--plus); }
+  .sign.minus { background: var(--minus); }
+  .ev-text { margin-top: 6px; white-space: pre-wrap; }
   .entry-preview { color: var(--muted); font-size: 0.9rem; margin-top: 6px;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .entry-detail { margin-top: 12px; font-size: 0.92rem; }
   .entry-detail .row { display: flex; justify-content: space-between; padding: 3px 0; }
   .entry-detail .block { margin-top: 10px; white-space: pre-wrap; }
   .entry-detail .block b { display: block; color: var(--muted); font-weight: 500; font-size: 0.85rem; }
+  .watch { margin: 4px 0 0; padding-left: 18px; }
+  .watch li { margin: 2px 0; }
+  .mini-list .entry { padding: 12px 16px; margin-bottom: 8px; }
 
-  /* Trend */
+  /* 趨勢 */
   svg text { fill: var(--muted); font-size: 11px; }
-  .legend { display: flex; gap: 16px; font-size: 0.85rem; color: var(--muted); margin-top: 8px; }
+  .legend { display: flex; gap: 16px; font-size: 0.85rem; color: var(--muted); margin-top: 8px; flex-wrap: wrap; }
   .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
   .legend .l1::before { background: var(--accent-2); }
   .legend .l2::before { background: var(--accent); }
-  .bar-row { margin: 10px 0; }
-  .bar-label { display: flex; justify-content: space-between; font-size: 0.88rem; }
+  .bar-row { margin: 14px 0; }
+  .bar-label { display: flex; justify-content: space-between; font-size: 0.88rem; gap: 8px; }
   .bar-track { height: 8px; background: var(--bg); border-radius: 4px; position: relative; margin-top: 4px; }
   .bar-fill { height: 100%; background: var(--accent); border-radius: 4px; }
   .bar-recent { position: absolute; top: -3px; width: 3px; height: 14px; background: var(--accent-2); border-radius: 2px; }
+  .ev-count { font-size: 0.8rem; }
+  .ev-count .p { color: var(--plus); }
+  .ev-count .m { color: var(--minus); }
   .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .stat { text-align: center; background: var(--bg); border-radius: 10px; padding: 12px 6px; }
   .stat .n { font-size: 1.4rem; font-weight: 600; }
   .stat .t { font-size: 0.8rem; color: var(--muted); }
-  .empty { text-align: center; color: var(--muted); padding: 30px 0; }
+  .empty { text-align: center; color: var(--muted); padding: 24px 0; }
 
-  /* Privacy cover */
   #cover {
     position: fixed; inset: 0; background: var(--bg); z-index: 999;
     display: flex; align-items: center; justify-content: center;
@@ -160,17 +194,15 @@
   .toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
     background: var(--text); color: var(--bg); padding: 8px 16px; border-radius: 10px;
-    font-size: 0.9rem; opacity: 0; transition: opacity .25s; pointer-events: none;
+    font-size: 0.9rem; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 1000;
   }
   .toast.show { opacity: 1; }
 </style>
 </head>
 <body>
 
-<!-- 隱私遮罩：按 Esc 或「隱藏」切換 -->
 <div id="cover" class="hidden">暫無內容</div>
 
-<!-- 登入畫面 -->
 <section id="login" class="hidden">
   <h1>Notes</h1>
   <p>Sign in to continue</p>
@@ -180,7 +212,6 @@
   </button>
 </section>
 
-<!-- 主畫面 -->
 <main id="app" class="wrap hidden">
   <header>
     <h1>Notes</h1>
@@ -193,24 +224,52 @@
   </header>
 
   <nav>
-    <button data-tab="new" class="active">新增紀錄</button>
+    <button data-tab="event" class="active">記一筆</button>
+    <button data-tab="checkin">定期檢查</button>
     <button data-tab="history">歷史</button>
     <button data-tab="trend">趨勢</button>
   </nav>
 
-  <!-- 新增 / 編輯 -->
-  <section id="tab-new">
+  <!-- ===== 記一筆 ===== -->
+  <section id="tab-event">
     <div class="card">
-      <h2 id="formTitle">今天的紀錄</h2>
-      <p class="sub">不用每項都填，憑當下的感覺就好。</p>
-      <label class="field" for="date">日期</label>
-      <input type="date" id="date" />
+      <h2 id="evTitle">發生了什麼？</h2>
+      <p class="sub">有讓你更確定或更猶豫的事，隨手記下來就好。</p>
+
+      <div class="sign-toggle">
+        <button id="evPlus">＋ 加分</button>
+        <button id="evMinus">－ 扣分</button>
+      </div>
+
+      <label class="field">跟哪方面有關（可不選）</label>
+      <div class="chips" id="evDims"></div>
+
+      <label class="field" for="evText">簡單描述</label>
+      <textarea id="evText" placeholder="例如：我累的時候他主動把晚餐處理好"></textarea>
+
+      <label class="field" for="evDate">日期</label>
+      <input type="date" id="evDate" />
+
+      <div class="actions">
+        <button id="evCancel" class="hidden">取消編輯</button>
+        <button class="primary" id="evSave">記下來</button>
+      </div>
     </div>
 
     <div class="card">
-      <h2>這段關係</h2>
-      <p class="sub">1 = 很不安心／很不合，5 = 很安心／很合得來</p>
-      <div id="dims"></div>
+      <h2>最近記下的</h2>
+      <div class="mini-list" id="recentEvents"></div>
+    </div>
+  </section>
+
+  <!-- ===== 定期檢查 ===== -->
+  <section id="tab-checkin" class="hidden">
+    <div class="hint" id="lastCheckinHint"></div>
+
+    <div class="card">
+      <h2 id="ckTitle">最近這段時間</h2>
+      <p class="sub">想想最近一兩週，回答「是／有點／不是」。沒遇到的情況就跳過，再點一次可以取消。</p>
+      <div id="stmts"></div>
     </div>
 
     <div class="card">
@@ -234,20 +293,27 @@
 
     <div class="card">
       <h2>其他筆記</h2>
-      <textarea id="notes" placeholder="今天發生了什麼？有什麼讓你更確定或更猶豫的事？"></textarea>
+      <textarea id="notes" placeholder="這段時間整體的感覺？"></textarea>
+      <label class="field" for="ckDate">日期</label>
+      <input type="date" id="ckDate" />
       <div class="actions">
-        <button id="cancelEditBtn" class="hidden">取消編輯</button>
-        <button class="primary" id="saveBtn">儲存</button>
+        <button id="ckCancel" class="hidden">取消編輯</button>
+        <button class="primary" id="ckSave">儲存</button>
       </div>
     </div>
   </section>
 
-  <!-- 歷史 -->
+  <!-- ===== 歷史 ===== -->
   <section id="tab-history" class="hidden">
+    <div class="filter" id="histFilter">
+      <button data-f="all" class="on">全部</button>
+      <button data-f="event">加減分</button>
+      <button data-f="checkin">檢查</button>
+    </div>
     <div id="historyList"></div>
   </section>
 
-  <!-- 趨勢 -->
+  <!-- ===== 趨勢 ===== -->
   <section id="tab-trend" class="hidden">
     <div id="trendContent"></div>
   </section>
@@ -265,7 +331,6 @@
     query, orderBy, onSnapshot, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  // ===== 把這裡換成你自己的 Firebase 設定 =====
   const firebaseConfig = {
     apiKey: "AIzaSyBxlFMibr98Jpu14fOkoEtPDIDoIW4k1mQ",
     authDomain: "tina-ca848.firebaseapp.com",
@@ -274,22 +339,45 @@
     messagingSenderId: "563391275176",
     appId: "1:563391275176:web:fc671772bf6c32b935e29d"
   };
-  // ==========================================
 
   const fb = initializeApp(firebaseConfig);
   const auth = getAuth(fb);
   const db = getFirestore(fb);
 
+  // ---------- 面向與敘述 ----------
   const DIMENSIONS = [
-    { key: "values",  name: "價值觀",       hint: "對重要的事情看法接近嗎" },
-    { key: "comm",    name: "溝通與吵架",   hint: "有分歧時能好好說、吵完能修復嗎" },
-    { key: "money",   name: "金錢觀",       hint: "花錢、存錢、分擔的方式合得來嗎" },
-    { key: "family",  name: "家庭與界線",   hint: "雙方家庭的相處與界線" },
-    { key: "daily",   name: "生活習慣",     hint: "一起生活時的日常摩擦" },
-    { key: "future",  name: "未來規劃",     hint: "小孩、居住地、工作的方向一致嗎" },
-    { key: "trust",   name: "安全感與信任", hint: "在他身邊我能放鬆做自己嗎" },
-    { key: "self",    name: "我的狀態",     hint: "在這段關係裡，我還喜歡自己的樣子嗎" }
+    { key: "values", name: "價值觀" },
+    { key: "comm",   name: "溝通" },
+    { key: "money",  name: "金錢" },
+    { key: "family", name: "家庭" },
+    { key: "daily",  name: "日常生活" },
+    { key: "future", name: "未來規劃" },
+    { key: "trust",  name: "安全感" },
+    { key: "self",   name: "我自己" }
   ];
+  const DIM_NAME = Object.fromEntries(DIMENSIONS.map(d => [d.key, d.name]));
+  DIM_NAME.other = "其他";
+
+  // 2 = 是, 1 = 有點, 0 = 不是（全部用「是」= 好的方向來寫）
+  const STATEMENTS = [
+    { id: "v1", dim: "values", text: "對重要的事（怎麼過生活、什麼值得在乎），我們想法接近" },
+    { id: "v2", dim: "values", text: "我不需要藏起真正的想法來避免衝突" },
+    { id: "c1", dim: "comm",   text: "意見不合後，我們有好好和好，不是冷處理或不了了之" },
+    { id: "c2", dim: "comm",   text: "我說出自己的需要時，他有聽進去" },
+    { id: "m1", dim: "money",  text: "談到錢的事，我不會想迴避" },
+    { id: "m2", dim: "money",  text: "他花錢、存錢的方式讓我安心" },
+    { id: "f1", dim: "family", text: "想到跟他的家人相處，我不會緊繃" },
+    { id: "f2", dim: "family", text: "家人介入我們的事時，他會站在我們這邊處理" },
+    { id: "d1", dim: "daily",  text: "一起相處的日常（作息、習慣）沒有讓我累積不滿" },
+    { id: "d2", dim: "daily",  text: "家事和照顧的事，分配起來感覺公平" },
+    { id: "u1", dim: "future", text: "小孩、住哪裡、工作這些大方向，我們談過而且方向接近" },
+    { id: "u2", dim: "future", text: "想到跟他的五年後，期待多於擔心" },
+    { id: "t1", dim: "trust",  text: "在他身邊，我可以放鬆做自己" },
+    { id: "t2", dim: "trust",  text: "我相信他說的話，不需要去確認" },
+    { id: "s1", dim: "self",   text: "在這段關係裡，我還喜歡自己的樣子" },
+    { id: "s2", dim: "self",   text: "我的朋友、興趣、工作沒有因為這段關係被壓縮" }
+  ];
+  const ANSWER_LABEL = { 2: "是", 1: "有點", 0: "不是" };
 
   const PROMPTS = [
     "如果完全不考慮任何人的期待，我想要嗎？",
@@ -308,17 +396,14 @@
     "什麼事情發生的話，我會很確定答案是「不」？"
   ];
 
-  // ---------- DOM ----------
+  // ---------- 工具 ----------
   const $ = (id) => document.getElementById(id);
-  const loginEl = $("login"), appEl = $("app"), coverEl = $("cover");
-  let entriesUnsub = null;
-  let entries = [];
-  let editingId = null;
-  let currentPrompt = "";
-
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   }[c]));
+  const today = () => new Date().toLocaleDateString("sv");
+  const daysAgo = (n) => { const d = new Date(); d.setDate(d.getDate() - n); return d.toLocaleDateString("sv"); };
+  const daysBetween = (a, b) => Math.round((new Date(b) - new Date(a)) / 86400000);
 
   function toast(msg) {
     const t = $("toast");
@@ -327,35 +412,126 @@
     setTimeout(() => t.classList.remove("show"), 1800);
   }
 
-  function today() { return new Date().toLocaleDateString("sv"); } // YYYY-MM-DD
+  const loginEl = $("login"), appEl = $("app"), coverEl = $("cover");
+  let entriesUnsub = null;
+  let entries = [];
+  let histFilter = "all";
 
-  // ---------- 建立評分欄位 ----------
-  function buildDims() {
-    $("dims").innerHTML = DIMENSIONS.map(d => `
-      <div class="dim">
-        <div class="dim-head">
-          <span class="dim-name">${d.name}</span>
-          <span class="dim-hint">${d.hint}</span>
-        </div>
-        <div class="scale">
-          ${[1,2,3,4,5].map(n => `
-            <input type="radio" name="dim-${d.key}" id="dim-${d.key}-${n}" value="${n}">
-            <label for="dim-${d.key}-${n}">${n}</label>`).join("")}
-        </div>
-      </div>`).join("");
+  const isEvent = e => e.type === "event";
+  const isCheckin = e => e.type !== "event"; // 舊資料沒有 type，視為檢查
 
-    // 再點一次可以取消選擇
-    document.querySelectorAll(".scale input").forEach(inp => {
+  // 單一面向分數（0–100），舊資料的 1–5 分也換算進來
+  function dimScore(e, key) {
+    if (e.answers) {
+      const vals = STATEMENTS.filter(s => s.dim === key)
+        .map(s => e.answers[s.id]).filter(v => v !== undefined && v !== null);
+      if (vals.length) return vals.reduce((a, b) => a + b, 0) / vals.length / 2 * 100;
+    }
+    const old = e.scores?.[key];
+    return old ? (old - 1) / 4 * 100 : null;
+  }
+  function relAvg(e) {
+    const v = DIMENSIONS.map(d => dimScore(e, d.key)).filter(x => x !== null);
+    return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
+  }
+  function sortDesc(list) {
+    return [...list].sort((a, b) =>
+      b.date.localeCompare(a.date) ||
+      ((b.createdAt?.seconds ?? Infinity) - (a.createdAt?.seconds ?? Infinity)));
+  }
+
+  // 讓 radio 再點一次可以取消
+  function makeUnselectable(container) {
+    container.querySelectorAll("input[type=radio]").forEach(inp => {
       inp.addEventListener("click", function () {
         if (this.dataset.was === "1") { this.checked = false; this.dataset.was = "0"; }
         else {
-          document.querySelectorAll(`input[name="${this.name}"]`).forEach(o => o.dataset.was = "0");
+          container.querySelectorAll(`input[name="${this.name}"]`).forEach(o => o.dataset.was = "0");
           this.dataset.was = "1";
         }
       });
     });
   }
 
+  // =========================================================
+  // 記一筆
+  // =========================================================
+  let evSign = null, evDim = null, evEditingId = null;
+
+  function buildEventForm() {
+    $("evDims").innerHTML = [...DIMENSIONS, { key: "other", name: "其他" }]
+      .map(d => `<button data-k="${d.key}">${d.name}</button>`).join("");
+    $("evDims").addEventListener("click", ev => {
+      const b = ev.target.closest("button"); if (!b) return;
+      evDim = evDim === b.dataset.k ? null : b.dataset.k;
+      paintEventForm();
+    });
+    $("evPlus").addEventListener("click", () => { evSign = evSign === 1 ? null : 1; paintEventForm(); });
+    $("evMinus").addEventListener("click", () => { evSign = evSign === -1 ? null : -1; paintEventForm(); });
+    $("evSave").addEventListener("click", saveEvent);
+    $("evCancel").addEventListener("click", resetEvent);
+  }
+  function paintEventForm() {
+    $("evPlus").className = evSign === 1 ? "on-plus" : "";
+    $("evMinus").className = evSign === -1 ? "on-minus" : "";
+    $("evDims").querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.k === evDim));
+  }
+  function resetEvent() {
+    evSign = null; evDim = null; evEditingId = null;
+    $("evText").value = ""; $("evDate").value = today();
+    $("evTitle").textContent = "發生了什麼？";
+    $("evCancel").classList.add("hidden");
+    $("evSave").textContent = "記下來";
+    paintEventForm();
+  }
+  function fillEvent(e) {
+    evSign = e.sign; evDim = e.dim || null; evEditingId = e.id;
+    $("evText").value = e.text || ""; $("evDate").value = e.date;
+    $("evTitle").textContent = `編輯 ${e.date} 的事件`;
+    $("evCancel").classList.remove("hidden");
+    $("evSave").textContent = "更新";
+    paintEventForm();
+    switchTab("event");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  async function saveEvent() {
+    if (!evSign) { toast("先選加分或扣分"); return; }
+    if (!$("evText").value.trim()) { toast("簡單寫一下發生什麼事"); return; }
+    const data = {
+      type: "event",
+      sign: evSign,
+      dim: evDim || "other",
+      text: $("evText").value.trim(),
+      date: $("evDate").value || today()
+    };
+    if (await saveEntry(data, evEditingId, $("evSave"))) resetEvent();
+  }
+
+  // =========================================================
+  // 定期檢查
+  // =========================================================
+  let ckEditingId = null, currentPrompt = "";
+
+  function buildCheckinForm() {
+    $("stmts").innerHTML = DIMENSIONS.map(d => `
+      <div class="dim-group">
+        <div class="dim-title">${d.name}</div>
+        ${STATEMENTS.filter(s => s.dim === d.key).map(s => `
+          <div class="stmt">
+            <div class="stmt-text">${s.text}</div>
+            <div class="tri">
+              ${[2, 1, 0].map(v => `
+                <input type="radio" name="st-${s.id}" id="st-${s.id}-${v}" value="${v}">
+                <label for="st-${s.id}-${v}">${ANSWER_LABEL[v]}</label>`).join("")}
+            </div>
+          </div>`).join("")}
+      </div>`).join("");
+    makeUnselectable($("stmts"));
+    $("willing").addEventListener("input", e => $("willingVal").textContent = e.target.value);
+    $("shuffleBtn").addEventListener("click", newPrompt);
+    $("ckSave").addEventListener("click", saveCheckin);
+    $("ckCancel").addEventListener("click", resetCheckin);
+  }
   function newPrompt() {
     let p;
     do { p = PROMPTS[Math.floor(Math.random() * PROMPTS.length)]; }
@@ -363,62 +539,62 @@
     currentPrompt = p;
     $("promptText").textContent = p;
   }
-
-  function resetForm() {
-    editingId = null;
-    $("formTitle").textContent = "今天的紀錄";
-    $("cancelEditBtn").classList.add("hidden");
-    $("date").value = today();
-    document.querySelectorAll(".scale input").forEach(i => { i.checked = false; i.dataset.was = "0"; });
+  function clearStmts() {
+    $("stmts").querySelectorAll("input").forEach(i => { i.checked = false; i.dataset.was = "0"; });
+  }
+  function resetCheckin() {
+    ckEditingId = null;
+    clearStmts();
     $("willing").value = 50; $("willingVal").textContent = 50;
     $("reflection").value = ""; $("notes").value = "";
+    $("ckDate").value = today();
+    $("ckTitle").textContent = "最近這段時間";
+    $("ckCancel").classList.add("hidden");
     newPrompt();
   }
-
-  function readForm() {
-    const scores = {};
-    DIMENSIONS.forEach(d => {
-      const c = document.querySelector(`input[name="dim-${d.key}"]:checked`);
-      if (c) scores[d.key] = Number(c.value);
-    });
-    return {
-      date: $("date").value || today(),
-      scores,
-      willing: Number($("willing").value),
-      prompt: currentPrompt,
-      reflection: $("reflection").value.trim(),
-      notes: $("notes").value.trim()
-    };
-  }
-
-  function fillForm(e) {
-    editingId = e.id;
-    $("formTitle").textContent = `編輯 ${e.date} 的紀錄`;
-    $("cancelEditBtn").classList.remove("hidden");
-    $("date").value = e.date;
-    document.querySelectorAll(".scale input").forEach(i => { i.checked = false; i.dataset.was = "0"; });
-    DIMENSIONS.forEach(d => {
-      const v = e.scores?.[d.key];
-      if (v) {
-        const el = $(`dim-${d.key}-${v}`);
-        if (el) { el.checked = true; el.dataset.was = "1"; }
-      }
+  function fillCheckin(e) {
+    ckEditingId = e.id;
+    clearStmts();
+    Object.entries(e.answers || {}).forEach(([id, v]) => {
+      const el = $(`st-${id}-${v}`);
+      if (el) { el.checked = true; el.dataset.was = "1"; }
     });
     $("willing").value = e.willing ?? 50; $("willingVal").textContent = e.willing ?? 50;
     currentPrompt = e.prompt || PROMPTS[0];
     $("promptText").textContent = currentPrompt;
     $("reflection").value = e.reflection || "";
     $("notes").value = e.notes || "";
-    switchTab("new");
+    $("ckDate").value = e.date;
+    $("ckTitle").textContent = `編輯 ${e.date} 的檢查`;
+    $("ckCancel").classList.remove("hidden");
+    switchTab("checkin");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
+  async function saveCheckin() {
+    const answers = {};
+    STATEMENTS.forEach(s => {
+      const c = document.querySelector(`input[name="st-${s.id}"]:checked`);
+      if (c) answers[s.id] = Number(c.value);
+    });
+    const data = {
+      type: "checkin",
+      answers,
+      willing: Number($("willing").value),
+      prompt: currentPrompt,
+      reflection: $("reflection").value.trim(),
+      notes: $("notes").value.trim(),
+      date: $("ckDate").value || today()
+    };
+    if (await saveEntry(data, ckEditingId, $("ckSave"))) resetCheckin();
+  }
 
-  async function save() {
+  // =========================================================
+  // 共用儲存 / 刪除
+  // =========================================================
+  async function saveEntry(data, editingId, btn) {
     const user = auth.currentUser;
-    if (!user) return;
-    const data = readForm();
+    if (!user) return false;
     const col = collection(db, "users", user.uid, "entries");
-    const btn = $("saveBtn");
     btn.disabled = true;
     try {
       if (editingId) {
@@ -428,15 +604,15 @@
         await addDoc(col, { ...data, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
         toast("已儲存");
       }
-      resetForm();
+      return true;
     } catch (err) {
       console.error(err);
       toast("儲存失敗：" + err.code);
+      return false;
     } finally {
       btn.disabled = false;
     }
   }
-
   async function removeEntry(id) {
     if (!confirm("確定要刪除這筆紀錄嗎？")) return;
     try {
@@ -445,154 +621,239 @@
     } catch (err) { toast("刪除失敗：" + err.code); }
   }
 
-  // ---------- 計算 ----------
-  function avgScore(e) {
-    const v = Object.values(e.scores || {});
-    return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
-  }
+  // =========================================================
+  // 卡片
+  // =========================================================
+  const actionsHtml = `
+    <div class="actions">
+      <button class="small" data-act="edit">編輯</button>
+      <button class="small danger" data-act="del">刪除</button>
+    </div>`;
 
-  // ---------- 歷史 ----------
-  function renderHistory() {
-    const list = $("historyList");
-    if (!entries.length) { list.innerHTML = `<div class="empty">還沒有紀錄</div>`; return; }
-    list.innerHTML = entries.map(e => {
-      const a = avgScore(e);
-      const preview = e.notes || e.reflection || "";
-      const rows = DIMENSIONS.filter(d => e.scores?.[d.key])
-        .map(d => `<div class="row"><span>${d.name}</span><span>${"●".repeat(e.scores[d.key])}${"○".repeat(5 - e.scores[d.key])}</span></div>`).join("");
-      return `
+  function eventCard(e) {
+    const plus = e.sign === 1;
+    return `
       <div class="card entry" data-id="${esc(e.id)}">
         <div class="entry-top">
-          <span class="entry-date">${esc(e.date)}</span>
+          <span><span class="sign ${plus ? "plus" : "minus"}">${plus ? "＋" : "－"}</span><span class="entry-date">${esc(e.date)}</span></span>
+          <span class="pill">${esc(DIM_NAME[e.dim] || "其他")}</span>
+        </div>
+        <div class="ev-text">${esc(e.text)}</div>
+        <div class="entry-detail hidden">${actionsHtml}</div>
+      </div>`;
+  }
+
+  function checkinCard(e) {
+    const a = relAvg(e);
+    const preview = e.notes || e.reflection || "";
+    const dimRows = DIMENSIONS.map(d => {
+      const s = dimScore(e, d.key);
+      return s === null ? "" : `<div class="row"><span>${d.name}</span><span>${Math.round(s)}</span></div>`;
+    }).join("");
+    const watch = STATEMENTS.filter(s => e.answers && e.answers[s.id] !== undefined && e.answers[s.id] < 2)
+      .map(s => `<li>${e.answers[s.id] === 0 ? "不是" : "有點"}：${s.text}</li>`).join("");
+    return `
+      <div class="card entry" data-id="${esc(e.id)}">
+        <div class="entry-top">
+          <span class="entry-date">${esc(e.date)} 檢查</span>
           <span style="display:flex;gap:6px">
             <span class="pill">意願 ${e.willing ?? "-"}</span>
-            <span class="pill">關係 ${a ? a.toFixed(1) : "-"}</span>
+            <span class="pill">關係 ${a !== null ? Math.round(a) : "-"}</span>
           </span>
         </div>
         ${preview ? `<div class="entry-preview">${esc(preview)}</div>` : ""}
         <div class="entry-detail hidden">
-          ${rows}
+          ${dimRows}
+          ${watch ? `<div class="block"><b>需要留意</b><ul class="watch">${watch}</ul></div>` : ""}
           ${e.reflection ? `<div class="block"><b>${esc(e.prompt)}</b>${esc(e.reflection)}</div>` : ""}
           ${e.notes ? `<div class="block"><b>筆記</b>${esc(e.notes)}</div>` : ""}
-          <div class="actions">
-            <button class="small" data-act="edit">編輯</button>
-            <button class="small danger" data-act="del">刪除</button>
-          </div>
+          ${actionsHtml}
         </div>
       </div>`;
-    }).join("");
   }
 
-  $("historyList").addEventListener("click", (ev) => {
+  function cardFor(e) { return isEvent(e) ? eventCard(e) : checkinCard(e); }
+
+  function handleCardClick(ev) {
     const card = ev.target.closest(".entry");
     if (!card) return;
-    const id = card.dataset.id;
+    const e = entries.find(x => x.id === card.dataset.id);
+    if (!e) return;
     const act = ev.target.dataset.act;
-    if (act === "edit") { fillForm(entries.find(x => x.id === id)); return; }
-    if (act === "del") { removeEntry(id); return; }
+    if (act === "edit") { isEvent(e) ? fillEvent(e) : fillCheckin(e); return; }
+    if (act === "del") { removeEntry(e.id); return; }
     card.querySelector(".entry-detail").classList.toggle("hidden");
+  }
+  $("historyList").addEventListener("click", handleCardClick);
+  $("recentEvents").addEventListener("click", handleCardClick);
+
+  // =========================================================
+  // 畫面渲染
+  // =========================================================
+  function renderRecent() {
+    const ev = sortDesc(entries.filter(isEvent)).slice(0, 5);
+    $("recentEvents").innerHTML = ev.length ? ev.map(eventCard).join("") : `<div class="empty">還沒有記錄</div>`;
+  }
+
+  function renderCheckinHint() {
+    const last = sortDesc(entries.filter(isCheckin))[0];
+    const since = last ? entries.filter(e => isEvent(e) && e.date > last.date) : entries.filter(isEvent);
+    const p = since.filter(e => e.sign === 1).length, m = since.filter(e => e.sign === -1).length;
+    if (!last) {
+      $("lastCheckinHint").textContent = "建議每一到兩週做一次，第一次做大概 3 分鐘。";
+    } else {
+      const d = daysBetween(last.date, today());
+      $("lastCheckinHint").textContent =
+        `上次檢查是 ${d === 0 ? "今天" : d + " 天前"}（${last.date}）。之後記了 ${p} 個加分、${m} 個扣分。`;
+    }
+  }
+
+  function renderHistory() {
+    const list = sortDesc(entries.filter(e =>
+      histFilter === "all" || (histFilter === "event" ? isEvent(e) : isCheckin(e))));
+    $("historyList").innerHTML = list.length ? list.map(cardFor).join("") : `<div class="empty">還沒有紀錄</div>`;
+  }
+  $("histFilter").addEventListener("click", ev => {
+    const b = ev.target.closest("button"); if (!b) return;
+    histFilter = b.dataset.f;
+    $("histFilter").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
+    renderHistory();
   });
 
-  // ---------- 趨勢 ----------
   function renderTrend() {
     const box = $("trendContent");
-    if (!entries.length) { box.innerHTML = `<div class="empty">累積幾筆紀錄後，這裡會出現變化曲線</div>`; return; }
+    const checks = [...entries.filter(isCheckin)].sort((a, b) => a.date.localeCompare(b.date));
+    const events = entries.filter(isEvent);
+    if (!checks.length && !events.length) {
+      box.innerHTML = `<div class="empty">累積一些紀錄後，這裡會出現變化</div>`;
+      return;
+    }
 
-    const asc = [...entries].sort((a, b) => a.date.localeCompare(b.date));
-    const willingAvg = asc.reduce((s, e) => s + (e.willing ?? 0), 0) / asc.length;
-    const recent = asc.slice(-3);
-    const recentWilling = recent.reduce((s, e) => s + (e.willing ?? 0), 0) / recent.length;
+    const cutoff = daysAgo(30);
+    const ev30 = events.filter(e => e.date >= cutoff);
+    const p30 = ev30.filter(e => e.sign === 1).length;
+    const m30 = ev30.filter(e => e.sign === -1).length;
+
+    const n = checks.length;
+    const recent = checks.slice(-3);
+    const avgW = n ? checks.reduce((s, e) => s + (e.willing ?? 0), 0) / n : null;
+    const recW = n ? recent.reduce((s, e) => s + (e.willing ?? 0), 0) / recent.length : null;
 
     // 折線圖
-    const W = 640, H = 220, P = 30;
-    const n = asc.length;
-    const x = i => n === 1 ? W / 2 : P + i * (W - 2 * P) / (n - 1);
-    const y = v => H - P - v * (H - 2 * P) / 100;
-    const ptsW = asc.map((e, i) => `${x(i)},${y(e.willing ?? 0)}`).join(" ");
-    const relPts = asc.map((e, i) => { const a = avgScore(e); return a ? [x(i), y((a - 1) / 4 * 100)] : null; }).filter(Boolean);
-    const ptsR = relPts.map(p => p.join(",")).join(" ");
-    const grid = [0, 50, 100].map(v => `
-      <line x1="${P}" x2="${W - P}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-dasharray="3 4"/>
-      <text x="4" y="${y(v) + 4}">${v}</text>`).join("");
-    const labelEvery = Math.max(1, Math.ceil(n / 6));
-    const xLabels = asc.map((e, i) => i % labelEvery === 0 || i === n - 1
-      ? `<text x="${x(i)}" y="${H - 8}" text-anchor="middle">${esc(e.date.slice(5))}</text>` : "").join("");
-    const dotsW = asc.map((e, i) => `<circle cx="${x(i)}" cy="${y(e.willing ?? 0)}" r="3.5" fill="var(--accent-2)"/>`).join("");
-    const dotsR = relPts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="var(--accent)"/>`).join("");
+    let chart = `<div class="empty">做過兩次以上的定期檢查，就會出現曲線</div>`;
+    if (n >= 2) {
+      const W = 640, H = 220, P = 30;
+      const x = i => P + i * (W - 2 * P) / (n - 1);
+      const y = v => H - P - v * (H - 2 * P) / 100;
+      const ptsW = checks.map((e, i) => `${x(i)},${y(e.willing ?? 0)}`).join(" ");
+      const rel = checks.map((e, i) => { const a = relAvg(e); return a !== null ? [x(i), y(a)] : null; }).filter(Boolean);
+      const grid = [0, 50, 100].map(v => `
+        <line x1="${P}" x2="${W - P}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-dasharray="3 4"/>
+        <text x="4" y="${y(v) + 4}">${v}</text>`).join("");
+      const every = Math.max(1, Math.ceil(n / 6));
+      const xl = checks.map((e, i) => i % every === 0 || i === n - 1
+        ? `<text x="${x(i)}" y="${H - 8}" text-anchor="middle">${esc(e.date.slice(5))}</text>` : "").join("");
+      chart = `
+        <svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="趨勢圖">
+          ${grid}
+          ${rel.length > 1 ? `<polyline points="${rel.map(p => p.join(",")).join(" ")}" fill="none" stroke="var(--accent)" stroke-width="2" opacity="0.8"/>` : ""}
+          <polyline points="${ptsW}" fill="none" stroke="var(--accent-2)" stroke-width="2.5"/>
+          ${rel.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="var(--accent)"/>`).join("")}
+          ${checks.map((e, i) => `<circle cx="${x(i)}" cy="${y(e.willing ?? 0)}" r="3.5" fill="var(--accent-2)"/>`).join("")}
+          ${xl}
+        </svg>
+        <div class="legend"><span class="l1">我自己的意願</span><span class="l2">關係分數（檢查平均）</span></div>`;
+    }
 
-    // 各面向平均
-    const dimStats = DIMENSIONS.map(d => {
-      const all = asc.map(e => e.scores?.[d.key]).filter(Boolean);
-      const rec = recent.map(e => e.scores?.[d.key]).filter(Boolean);
-      return {
-        ...d,
-        avg: all.length ? all.reduce((a, b) => a + b, 0) / all.length : null,
-        rec: rec.length ? rec.reduce((a, b) => a + b, 0) / rec.length : null
-      };
-    });
-    const bars = dimStats.map(d => d.avg === null ? "" : `
-      <div class="bar-row">
-        <div class="bar-label"><span>${d.name}</span><span>${d.avg.toFixed(1)}${d.rec !== null ? ` <span style="color:var(--accent-2)">／近期 ${d.rec.toFixed(1)}</span>` : ""}</span></div>
-        <div class="bar-track">
-          <div class="bar-fill" style="width:${(d.avg / 5) * 100}%"></div>
-          ${d.rec !== null ? `<div class="bar-recent" style="left:calc(${(d.rec / 5) * 100}% - 1.5px)"></div>` : ""}
-        </div>
-      </div>`).join("");
+    // 各面向
+    const rows = DIMENSIONS.map(d => {
+      const all = checks.map(e => dimScore(e, d.key)).filter(v => v !== null);
+      const rec = recent.map(e => dimScore(e, d.key)).filter(v => v !== null);
+      const avg = all.length ? all.reduce((a, b) => a + b, 0) / all.length : null;
+      const ravg = rec.length ? rec.reduce((a, b) => a + b, 0) / rec.length : null;
+      const dp = ev30.filter(e => e.dim === d.key && e.sign === 1).length;
+      const dm = ev30.filter(e => e.dim === d.key && e.sign === -1).length;
+      if (avg === null && !dp && !dm) return "";
+      return `
+        <div class="bar-row">
+          <div class="bar-label">
+            <span>${d.name}</span>
+            <span>
+              ${dp || dm ? `<span class="ev-count"><span class="p">＋${dp}</span> <span class="m">－${dm}</span></span>` : ""}
+              ${avg !== null ? ` · ${Math.round(avg)}` : ""}
+              ${ravg !== null && n > 1 ? `<span style="color:var(--accent-2)">／近期 ${Math.round(ravg)}</span>` : ""}
+            </span>
+          </div>
+          ${avg !== null ? `<div class="bar-track">
+            <div class="bar-fill" style="width:${avg}%"></div>
+            ${ravg !== null && n > 1 ? `<div class="bar-recent" style="left:calc(${ravg}% - 1.5px)"></div>` : ""}
+          </div>` : ""}
+        </div>`;
+    }).join("");
+
+    // 最常出現的不是 / 有點
+    const lowCount = {};
+    checks.slice(-4).forEach(e => Object.entries(e.answers || {}).forEach(([id, v]) => {
+      if (v < 2) lowCount[id] = (lowCount[id] || 0) + (v === 0 ? 2 : 1);
+    }));
+    const lows = Object.entries(lowCount).sort((a, b) => b[1] - a[1]).slice(0, 3)
+      .map(([id]) => STATEMENTS.find(s => s.id === id)).filter(Boolean);
 
     box.innerHTML = `
       <div class="card">
         <div class="stats">
-          <div class="stat"><div class="n">${n}</div><div class="t">筆紀錄</div></div>
-          <div class="stat"><div class="n">${Math.round(willingAvg)}</div><div class="t">平均意願</div></div>
-          <div class="stat"><div class="n">${Math.round(recentWilling)}</div><div class="t">最近 3 筆意願</div></div>
+          <div class="stat"><div class="n">${avgW !== null ? Math.round(avgW) : "-"}</div><div class="t">平均意願</div></div>
+          <div class="stat"><div class="n">${recW !== null ? Math.round(recW) : "-"}</div><div class="t">最近 3 次意願</div></div>
+          <div class="stat"><div class="n"><span style="color:var(--plus)">${p30}</span> / <span style="color:var(--minus)">${m30}</span></div><div class="t">30 天加分 / 扣分</div></div>
         </div>
       </div>
       <div class="card">
         <h2>變化曲線</h2>
-        <svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="趨勢圖">
-          ${grid}
-          ${n > 1 ? `<polyline points="${ptsR}" fill="none" stroke="var(--accent)" stroke-width="2" opacity="0.8"/>` : ""}
-          ${n > 1 ? `<polyline points="${ptsW}" fill="none" stroke="var(--accent-2)" stroke-width="2.5"/>` : ""}
-          ${dotsR}${dotsW}${xLabels}
-        </svg>
-        <div class="legend"><span class="l1">我自己的意願</span><span class="l2">關係平均（換算成 0–100）</span></div>
+        ${chart}
       </div>
       <div class="card">
         <h2>各面向</h2>
-        <p class="sub">長條是全部平均，橘色標記是最近 3 筆。</p>
-        ${bars || `<div class="empty">還沒有評分</div>`}
-      </div>`;
+        <p class="sub">數字是檢查的平均（0–100），橘色標記是最近 3 次；＋／－ 是最近 30 天記下的事件。</p>
+        ${rows || `<div class="empty">還沒有資料</div>`}
+      </div>
+      ${lows.length ? `
+      <div class="card">
+        <h2>最近反覆出現的</h2>
+        <p class="sub">最近幾次檢查中，最常回答「不是」或「有點」的。</p>
+        <ul class="watch">${lows.map(s => `<li>${s.text}</li>`).join("")}</ul>
+      </div>` : ""}`;
   }
 
-  // ---------- 分頁 ----------
+  function renderAll() {
+    renderRecent();
+    renderCheckinHint();
+    renderHistory();
+    renderTrend();
+  }
+
+  // =========================================================
+  // 分頁 / 遮罩 / 登入
+  // =========================================================
   function switchTab(name) {
     document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
-    ["new", "history", "trend"].forEach(t => $(`tab-${t}`).classList.toggle("hidden", t !== name));
+    ["event", "checkin", "history", "trend"].forEach(t => $(`tab-${t}`).classList.toggle("hidden", t !== name));
   }
   document.querySelectorAll("nav button").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
 
-  // ---------- 隱私遮罩 ----------
   function toggleCover(force) {
     const show = force ?? coverEl.classList.contains("hidden");
     coverEl.classList.toggle("hidden", !show);
-    document.title = "Notes";
   }
   document.addEventListener("keydown", e => { if (e.key === "Escape" && auth.currentUser) toggleCover(); });
   coverEl.addEventListener("click", () => toggleCover(false));
   $("hideBtn").addEventListener("click", () => toggleCover(true));
 
-  // ---------- 事件 ----------
-  $("willing").addEventListener("input", e => $("willingVal").textContent = e.target.value);
-  $("shuffleBtn").addEventListener("click", newPrompt);
-  $("saveBtn").addEventListener("click", save);
-  $("cancelEditBtn").addEventListener("click", resetForm);
   $("loginBtn").addEventListener("click", async () => {
     try { await signInWithPopup(auth, new GoogleAuthProvider()); }
     catch (err) { console.error(err); toast("登入失敗：" + err.code); }
   });
   $("logoutBtn").addEventListener("click", () => signOut(auth));
 
-  // ---------- 登入狀態 ----------
   onAuthStateChanged(auth, user => {
     if (entriesUnsub) { entriesUnsub(); entriesUnsub = null; }
     if (!user) {
@@ -610,12 +871,10 @@
     const q = query(collection(db, "users", user.uid, "entries"), orderBy("date", "desc"));
     entriesUnsub = onSnapshot(q, snap => {
       entries = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      renderHistory();
-      renderTrend();
+      renderAll();
     }, err => {
       console.error(err);
       if (err.code === "permission-denied") {
-        // 不是允許的帳號：Firestore 規則擋下，直接登出
         signOut(auth);
         toast("此帳號沒有權限");
       } else {
@@ -624,8 +883,10 @@
     });
   });
 
-  buildDims();
-  resetForm();
+  buildEventForm();
+  buildCheckinForm();
+  resetEvent();
+  resetCheckin();
 </script>
 </body>
 </html>
