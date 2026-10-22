@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Notes</title>
+<style>
+  :root {
+    --bg: #f6f4f1;
+    --card: #ffffff;
+    --text: #2b2a28;
+    --muted: #8a857d;
+    --line: #e6e1da;
+    --accent: #7a8f7b;
+    --accent-2: #c49a7a;
+    --danger: #b65c5c;
+    --radius: 14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1b;
+      --card: #262624;
+      --text: #ebe7e1;
+      --muted: #9a958d;
+      --line: #3a3936;
+      --accent: #9db39e;
+      --accent-2: #d8b294;
+      --danger: #d98080;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 24px 16px 80px; }
+  .hidden { display: none !important; }
+
+  /* Login */
+  #login {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 20px; padding: 16px;
+  }
+  #login h1 { font-weight: 600; letter-spacing: 0.05em; margin: 0; }
+  #login p { color: var(--muted); margin: 0; }
+
+  /* Header */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+  }
+  header h1 { margin: 0; font-size: 1.4rem; font-weight: 600; }
+  .user { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--muted); }
+  .user img { width: 28px; height: 28px; border-radius: 50%; }
+
+  /* Buttons */
+  button {
+    font: inherit; cursor: pointer; border: 1px solid var(--line);
+    background: var(--card); color: var(--text);
+    padding: 8px 14px; border-radius: 10px; transition: opacity .15s;
+  }
+  button:hover { opacity: 0.8; }
+  button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  button.danger { color: var(--danger); }
+  button.small { padding: 4px 10px; font-size: 0.85rem; }
+  .google-btn { display: flex; align-items: center; gap: 10px; padding: 10px 18px; }
+
+  /* Tabs */
+  nav { display: flex; gap: 6px; margin-bottom: 18px; border-bottom: 1px solid var(--line); }
+  nav button {
+    border: none; background: transparent; border-radius: 0;
+    padding: 10px 14px; color: var(--muted); border-bottom: 2px solid transparent;
+  }
+  nav button.active { color: var(--text); border-bottom-color: var(--accent); }
+
+  .card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 18px; margin-bottom: 16px;
+  }
+  .card h2 { margin: 0 0 4px; font-size: 1.05rem; }
+  .card .sub { color: var(--muted); font-size: 0.85rem; margin: 0 0 14px; }
+
+  label.field { display: block; font-size: 0.9rem; margin-bottom: 6px; color: var(--muted); }
+  input[type="date"], textarea {
+    width: 100%; font: inherit; color: var(--text); background: var(--bg);
+    border: 1px solid var(--line); border-radius: 10px; padding: 10px;
+  }
+  textarea { min-height: 100px; resize: vertical; }
+
+  /* Dimension rows */
+  .dim { padding: 12px 0; border-bottom: 1px dashed var(--line); }
+  .dim:last-child { border-bottom: none; }
+  .dim-head { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .dim-name { font-weight: 600; }
+  .dim-hint { color: var(--muted); font-size: 0.85rem; }
+  .scale { display: flex; gap: 6px; margin-top: 8px; }
+  .scale input { display: none; }
+  .scale label {
+    flex: 1; text-align: center; padding: 6px 0; border-radius: 8px;
+    border: 1px solid var(--line); cursor: pointer; font-size: 0.9rem; user-select: none;
+  }
+  .scale input:checked + label { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .scale-legend { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+
+  /* Slider */
+  .slider-row { display: flex; align-items: center; gap: 14px; }
+  input[type="range"] { flex: 1; accent-color: var(--accent-2); }
+  .big-num { font-size: 1.6rem; font-weight: 600; min-width: 64px; text-align: right; color: var(--accent-2); }
+
+  .prompt-box {
+    background: var(--bg); border-radius: 10px; padding: 12px 14px; margin-bottom: 10px;
+    display: flex; justify-content: space-between; gap: 10px; align-items: flex-start;
+  }
+  .prompt-text { font-weight: 500; }
+
+  .actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+
+  /* History */
+  .entry { cursor: pointer; }
+  .entry-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .entry-date { font-weight: 600; }
+  .pill {
+    font-size: 0.8rem; padding: 2px 10px; border-radius: 999px;
+    background: var(--bg); border: 1px solid var(--line); white-space: nowrap;
+  }
+  .entry-preview { color: var(--muted); font-size: 0.9rem; margin-top: 6px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .entry-detail { margin-top: 12px; font-size: 0.92rem; }
+  .entry-detail .row { display: flex; justify-content: space-between; padding: 3px 0; }
+  .entry-detail .block { margin-top: 10px; white-space: pre-wrap; }
+  .entry-detail .block b { display: block; color: var(--muted); font-weight: 500; font-size: 0.85rem; }
+
+  /* Trend */
+  svg text { fill: var(--muted); font-size: 11px; }
+  .legend { display: flex; gap: 16px; font-size: 0.85rem; color: var(--muted); margin-top: 8px; }
+  .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
+  .legend .l1::before { background: var(--accent-2); }
+  .legend .l2::before { background: var(--accent); }
+  .bar-row { margin: 10px 0; }
+  .bar-label { display: flex; justify-content: space-between; font-size: 0.88rem; }
+  .bar-track { height: 8px; background: var(--bg); border-radius: 4px; position: relative; margin-top: 4px; }
+  .bar-fill { height: 100%; background: var(--accent); border-radius: 4px; }
+  .bar-recent { position: absolute; top: -3px; width: 3px; height: 14px; background: var(--accent-2); border-radius: 2px; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .stat { text-align: center; background: var(--bg); border-radius: 10px; padding: 12px 6px; }
+  .stat .n { font-size: 1.4rem; font-weight: 600; }
+  .stat .t { font-size: 0.8rem; color: var(--muted); }
+  .empty { text-align: center; color: var(--muted); padding: 30px 0; }
+
+  /* Privacy cover */
+  #cover {
+    position: fixed; inset: 0; background: var(--bg); z-index: 999;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted); cursor: pointer;
+  }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--text); color: var(--bg); padding: 8px 16px; border-radius: 10px;
+    font-size: 0.9rem; opacity: 0; transition: opacity .25s; pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- 隱私遮罩：按 Esc 或「隱藏」切換 -->
+<div id="cover" class="hidden">暫無內容</div>
+
+<!-- 登入畫面 -->
+<section id="login" class="hidden">
+  <h1>Notes</h1>
+  <p>Sign in to continue</p>
+  <button class="google-btn" id="loginBtn">
+    <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
+    使用 Google 登入
+  </button>
+</section>
+
+<!-- 主畫面 -->
+<main id="app" class="wrap hidden">
+  <header>
+    <h1>Notes</h1>
+    <div class="user">
+      <button class="small" id="hideBtn" title="快速隱藏（Esc）">隱藏</button>
+      <img id="avatar" alt="" />
+      <span id="userName"></span>
+      <button class="small" id="logoutBtn">登出</button>
+    </div>
+  </header>
+
+  <nav>
+    <button data-tab="new" class="active">新增紀錄</button>
+    <button data-tab="history">歷史</button>
+    <button data-tab="trend">趨勢</button>
+  </nav>
+
+  <!-- 新增 / 編輯 -->
+  <section id="tab-new">
+    <div class="card">
+      <h2 id="formTitle">今天的紀錄</h2>
+      <p class="sub">不用每項都填，憑當下的感覺就好。</p>
+      <label class="field" for="date">日期</label>
+      <input type="date" id="date" />
+    </div>
+
+    <div class="card">
+      <h2>這段關係</h2>
+      <p class="sub">1 = 很不安心／很不合，5 = 很安心／很合得來</p>
+      <div id="dims"></div>
+    </div>
+
+    <div class="card">
+      <h2>我自己</h2>
+      <p class="sub">撇開他好不好，此刻的「我」想不想走進這個決定？</p>
+      <div class="slider-row">
+        <input type="range" id="willing" min="0" max="100" step="5" value="50" />
+        <div class="big-num" id="willingVal">50</div>
+      </div>
+      <div class="scale-legend"><span>完全不想</span><span>還不確定</span><span>非常想</span></div>
+    </div>
+
+    <div class="card">
+      <h2>反思一題</h2>
+      <div class="prompt-box">
+        <div class="prompt-text" id="promptText"></div>
+        <button class="small" id="shuffleBtn">換一題</button>
+      </div>
+      <textarea id="reflection" placeholder="寫下第一個浮現的想法…"></textarea>
+    </div>
+
+    <div class="card">
+      <h2>其他筆記</h2>
+      <textarea id="notes" placeholder="今天發生了什麼？有什麼讓你更確定或更猶豫的事？"></textarea>
+      <div class="actions">
+        <button id="cancelEditBtn" class="hidden">取消編輯</button>
+        <button class="primary" id="saveBtn">儲存</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 歷史 -->
+  <section id="tab-history" class="hidden">
+    <div id="historyList"></div>
+  </section>
+
+  <!-- 趨勢 -->
+  <section id="tab-trend" class="hidden">
+    <div id="trendContent"></div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    getFirestore, collection, addDoc, updateDoc, deleteDoc, doc,
+    query, orderBy, onSnapshot, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // ===== 把這裡換成你自己的 Firebase 設定 =====
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+  // ==========================================
+
+  // 只允許這個 Google 帳號使用（改成你自己的 Gmail）
+  const ALLOWED_EMAIL = "your.email@gmail.com";
+
+  const fb = initializeApp(firebaseConfig);
+  const auth = getAuth(fb);
+  const db = getFirestore(fb);
+
+  const DIMENSIONS = [
+    { key: "values",  name: "價值觀",       hint: "對重要的事情看法接近嗎" },
+    { key: "comm",    name: "溝通與吵架",   hint: "有分歧時能好好說、吵完能修復嗎" },
+    { key: "money",   name: "金錢觀",       hint: "花錢、存錢、分擔的方式合得來嗎" },
+    { key: "family",  name: "家庭與界線",   hint: "雙方家庭的相處與界線" },
+    { key: "daily",   name: "生活習慣",     hint: "一起生活時的日常摩擦" },
+    { key: "future",  name: "未來規劃",     hint: "小孩、居住地、工作的方向一致嗎" },
+    { key: "trust",   name: "安全感與信任", hint: "在他身邊我能放鬆做自己嗎" },
+    { key: "self",    name: "我的狀態",     hint: "在這段關係裡，我還喜歡自己的樣子嗎" }
+  ];
+
+  const PROMPTS = [
+    "如果完全不考慮任何人的期待，我想要嗎？",
+    "我想走這一步，是為了得到什麼？",
+    "我最害怕的是什麼？那個害怕是關於他，還是關於這件事本身？",
+    "五年後的平常週二晚上，我希望自己在過什麼樣的生活？",
+    "如果維持現狀不改變，我會覺得可惜還是鬆一口氣？",
+    "最近一次讓我心裡一沉的時刻是什麼？",
+    "最近一次讓我覺得「就是他」的時刻是什麼？",
+    "有哪件事我一直沒跟他說？為什麼？",
+    "我對這件事的猶豫，有多少來自過去的經驗或原生家庭？",
+    "如果好朋友處在我的位置，我會給她什麼建議？",
+    "我能接受他現在的樣子一輩子都不改變嗎？",
+    "我是想跟「他」在一起，還是想要「一個穩定的狀態」？",
+    "這段關係讓我變得更勇敢，還是更小心翼翼？",
+    "什麼事情發生的話，我會很確定答案是「不」？"
+  ];
+
+  // ---------- DOM ----------
+  const $ = (id) => document.getElementById(id);
+  const loginEl = $("login"), appEl = $("app"), coverEl = $("cover");
+  let entriesUnsub = null;
+  let entries = [];
+  let editingId = null;
+  let currentPrompt = "";
+
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+
+  function toast(msg) {
+    const t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 1800);
+  }
+
+  function today() { return new Date().toLocaleDateString("sv"); } // YYYY-MM-DD
+
+  // ---------- 建立評分欄位 ----------
+  function buildDims() {
+    $("dims").innerHTML = DIMENSIONS.map(d => `
+      <div class="dim">
+        <div class="dim-head">
+          <span class="dim-name">${d.name}</span>
+          <span class="dim-hint">${d.hint}</span>
+        </div>
+        <div class="scale">
+          ${[1,2,3,4,5].map(n => `
+            <input type="radio" name="dim-${d.key}" id="dim-${d.key}-${n}" value="${n}">
+            <label for="dim-${d.key}-${n}">${n}</label>`).join("")}
+        </div>
+      </div>`).join("");
+
+    // 再點一次可以取消選擇
+    document.querySelectorAll(".scale input").forEach(inp => {
+      inp.addEventListener("click", function () {
+        if (this.dataset.was === "1") { this.checked = false; this.dataset.was = "0"; }
+        else {
+          document.querySelectorAll(`input[name="${this.name}"]`).forEach(o => o.dataset.was = "0");
+          this.dataset.was = "1";
+        }
+      });
+    });
+  }
+
+  function newPrompt() {
+    let p;
+    do { p = PROMPTS[Math.floor(Math.random() * PROMPTS.length)]; }
+    while (p === currentPrompt && PROMPTS.length > 1);
+    currentPrompt = p;
+    $("promptText").textContent = p;
+  }
+
+  function resetForm() {
+    editingId = null;
+    $("formTitle").textContent = "今天的紀錄";
+    $("cancelEditBtn").classList.add("hidden");
+    $("date").value = today();
+    document.querySelectorAll(".scale input").forEach(i => { i.checked = false; i.dataset.was = "0"; });
+    $("willing").value = 50; $("willingVal").textContent = 50;
+    $("reflection").value = ""; $("notes").value = "";
+    newPrompt();
+  }
+
+  function readForm() {
+    const scores = {};
+    DIMENSIONS.forEach(d => {
+      const c = document.querySelector(`input[name="dim-${d.key}"]:checked`);
+      if (c) scores[d.key] = Number(c.value);
+    });
+    return {
+      date: $("date").value || today(),
+      scores,
+      willing: Number($("willing").value),
+      prompt: currentPrompt,
+      reflection: $("reflection").value.trim(),
+      notes: $("notes").value.trim()
+    };
+  }
+
+  function fillForm(e) {
+    editingId = e.id;
+    $("formTitle").textContent = `編輯 ${e.date} 的紀錄`;
+    $("cancelEditBtn").classList.remove("hidden");
+    $("date").value = e.date;
+    document.querySelectorAll(".scale input").forEach(i => { i.checked = false; i.dataset.was = "0"; });
+    DIMENSIONS.forEach(d => {
+      const v = e.scores?.[d.key];
+      if (v) {
+        const el = $(`dim-${d.key}-${v}`);
+        if (el) { el.checked = true; el.dataset.was = "1"; }
+      }
+    });
+    $("willing").value = e.willing ?? 50; $("willingVal").textContent = e.willing ?? 50;
+    currentPrompt = e.prompt || PROMPTS[0];
+    $("promptText").textContent = currentPrompt;
+    $("reflection").value = e.reflection || "";
+    $("notes").value = e.notes || "";
+    switchTab("new");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  async function save() {
+    const user = auth.currentUser;
+    if (!user) return;
+    const data = readForm();
+    const col = collection(db, "users", user.uid, "entries");
+    const btn = $("saveBtn");
+    btn.disabled = true;
+    try {
+      if (editingId) {
+        await updateDoc(doc(col, editingId), { ...data, updatedAt: serverTimestamp() });
+        toast("已更新");
+      } else {
+        await addDoc(col, { ...data, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+        toast("已儲存");
+      }
+      resetForm();
+    } catch (err) {
+      console.error(err);
+      toast("儲存失敗：" + err.code);
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  async function removeEntry(id) {
+    if (!confirm("確定要刪除這筆紀錄嗎？")) return;
+    try {
+      await deleteDoc(doc(db, "users", auth.currentUser.uid, "entries", id));
+      toast("已刪除");
+    } catch (err) { toast("刪除失敗：" + err.code); }
+  }
+
+  // ---------- 計算 ----------
+  function avgScore(e) {
+    const v = Object.values(e.scores || {});
+    return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
+  }
+
+  // ---------- 歷史 ----------
+  function renderHistory() {
+    const list = $("historyList");
+    if (!entries.length) { list.innerHTML = `<div class="empty">還沒有紀錄</div>`; return; }
+    list.innerHTML = entries.map(e => {
+      const a = avgScore(e);
+      const preview = e.notes || e.reflection || "";
+      const rows = DIMENSIONS.filter(d => e.scores?.[d.key])
+        .map(d => `<div class="row"><span>${d.name}</span><span>${"●".repeat(e.scores[d.key])}${"○".repeat(5 - e.scores[d.key])}</span></div>`).join("");
+      return `
+      <div class="card entry" data-id="${esc(e.id)}">
+        <div class="entry-top">
+          <span class="entry-date">${esc(e.date)}</span>
+          <span style="display:flex;gap:6px">
+            <span class="pill">意願 ${e.willing ?? "-"}</span>
+            <span class="pill">關係 ${a ? a.toFixed(1) : "-"}</span>
+          </span>
+        </div>
+        ${preview ? `<div class="entry-preview">${esc(preview)}</div>` : ""}
+        <div class="entry-detail hidden">
+          ${rows}
+          ${e.reflection ? `<div class="block"><b>${esc(e.prompt)}</b>${esc(e.reflection)}</div>` : ""}
+          ${e.notes ? `<div class="block"><b>筆記</b>${esc(e.notes)}</div>` : ""}
+          <div class="actions">
+            <button class="small" data-act="edit">編輯</button>
+            <button class="small danger" data-act="del">刪除</button>
+          </div>
+        </div>
+      </div>`;
+    }).join("");
+  }
+
+  $("historyList").addEventListener("click", (ev) => {
+    const card = ev.target.closest(".entry");
+    if (!card) return;
+    const id = card.dataset.id;
+    const act = ev.target.dataset.act;
+    if (act === "edit") { fillForm(entries.find(x => x.id === id)); return; }
+    if (act === "del") { removeEntry(id); return; }
+    card.querySelector(".entry-detail").classList.toggle("hidden");
+  });
+
+  // ---------- 趨勢 ----------
+  function renderTrend() {
+    const box = $("trendContent");
+    if (!entries.length) { box.innerHTML = `<div class="empty">累積幾筆紀錄後，這裡會出現變化曲線</div>`; return; }
+
+    const asc = [...entries].sort((a, b) => a.date.localeCompare(b.date));
+    const willingAvg = asc.reduce((s, e) => s + (e.willing ?? 0), 0) / asc.length;
+    const recent = asc.slice(-3);
+    const recentWilling = recent.reduce((s, e) => s + (e.willing ?? 0), 0) / recent.length;
+
+    // 折線圖
+    const W = 640, H = 220, P = 30;
+    const n = asc.length;
+    const x = i => n === 1 ? W / 2 : P + i * (W - 2 * P) / (n - 1);
+    const y = v => H - P - v * (H - 2 * P) / 100;
+    const ptsW = asc.map((e, i) => `${x(i)},${y(e.willing ?? 0)}`).join(" ");
+    const relPts = asc.map((e, i) => { const a = avgScore(e); return a ? [x(i), y((a - 1) / 4 * 100)] : null; }).filter(Boolean);
+    const ptsR = relPts.map(p => p.join(",")).join(" ");
+    const grid = [0, 50, 100].map(v => `
+      <line x1="${P}" x2="${W - P}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-dasharray="3 4"/>
+      <text x="4" y="${y(v) + 4}">${v}</text>`).join("");
+    const labelEvery = Math.max(1, Math.ceil(n / 6));
+    const xLabels = asc.map((e, i) => i % labelEvery === 0 || i === n - 1
+      ? `<text x="${x(i)}" y="${H - 8}" text-anchor="middle">${esc(e.date.slice(5))}</text>` : "").join("");
+    const dotsW = asc.map((e, i) => `<circle cx="${x(i)}" cy="${y(e.willing ?? 0)}" r="3.5" fill="var(--accent-2)"/>`).join("");
+    const dotsR = relPts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="var(--accent)"/>`).join("");
+
+    // 各面向平均
+    const dimStats = DIMENSIONS.map(d => {
+      const all = asc.map(e => e.scores?.[d.key]).filter(Boolean);
+      const rec = recent.map(e => e.scores?.[d.key]).filter(Boolean);
+      return {
+        ...d,
+        avg: all.length ? all.reduce((a, b) => a + b, 0) / all.length : null,
+        rec: rec.length ? rec.reduce((a, b) => a + b, 0) / rec.length : null
+      };
+    });
+    const bars = dimStats.map(d => d.avg === null ? "" : `
+      <div class="bar-row">
+        <div class="bar-label"><span>${d.name}</span><span>${d.avg.toFixed(1)}${d.rec !== null ? ` <span style="color:var(--accent-2)">／近期 ${d.rec.toFixed(1)}</span>` : ""}</span></div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${(d.avg / 5) * 100}%"></div>
+          ${d.rec !== null ? `<div class="bar-recent" style="left:calc(${(d.rec / 5) * 100}% - 1.5px)"></div>` : ""}
+        </div>
+      </div>`).join("");
+
+    box.innerHTML = `
+      <div class="card">
+        <div class="stats">
+          <div class="stat"><div class="n">${n}</div><div class="t">筆紀錄</div></div>
+          <div class="stat"><div class="n">${Math.round(willingAvg)}</div><div class="t">平均意願</div></div>
+          <div class="stat"><div class="n">${Math.round(recentWilling)}</div><div class="t">最近 3 筆意願</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>變化曲線</h2>
+        <svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="趨勢圖">
+          ${grid}
+          ${n > 1 ? `<polyline points="${ptsR}" fill="none" stroke="var(--accent)" stroke-width="2" opacity="0.8"/>` : ""}
+          ${n > 1 ? `<polyline points="${ptsW}" fill="none" stroke="var(--accent-2)" stroke-width="2.5"/>` : ""}
+          ${dotsR}${dotsW}${xLabels}
+        </svg>
+        <div class="legend"><span class="l1">我自己的意願</span><span class="l2">關係平均（換算成 0–100）</span></div>
+      </div>
+      <div class="card">
+        <h2>各面向</h2>
+        <p class="sub">長條是全部平均，橘色標記是最近 3 筆。</p>
+        ${bars || `<div class="empty">還沒有評分</div>`}
+      </div>`;
+  }
+
+  // ---------- 分頁 ----------
+  function switchTab(name) {
+    document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+    ["new", "history", "trend"].forEach(t => $(`tab-${t}`).classList.toggle("hidden", t !== name));
+  }
+  document.querySelectorAll("nav button").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+  // ---------- 隱私遮罩 ----------
+  function toggleCover(force) {
+    const show = force ?? coverEl.classList.contains("hidden");
+    coverEl.classList.toggle("hidden", !show);
+    document.title = "Notes";
+  }
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && auth.currentUser) toggleCover(); });
+  coverEl.addEventListener("click", () => toggleCover(false));
+  $("hideBtn").addEventListener("click", () => toggleCover(true));
+
+  // ---------- 事件 ----------
+  $("willing").addEventListener("input", e => $("willingVal").textContent = e.target.value);
+  $("shuffleBtn").addEventListener("click", newPrompt);
+  $("saveBtn").addEventListener("click", save);
+  $("cancelEditBtn").addEventListener("click", resetForm);
+  $("loginBtn").addEventListener("click", async () => {
+    try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+    catch (err) { console.error(err); toast("登入失敗：" + err.code); }
+  });
+  $("logoutBtn").addEventListener("click", () => signOut(auth));
+
+  // ---------- 登入狀態 ----------
+  onAuthStateChanged(auth, user => {
+    if (entriesUnsub) { entriesUnsub(); entriesUnsub = null; }
+    if (!user) {
+      entries = [];
+      appEl.classList.add("hidden");
+      loginEl.classList.remove("hidden");
+      coverEl.classList.add("hidden");
+      return;
+    }
+    if ((user.email || "").toLowerCase() !== ALLOWED_EMAIL.toLowerCase()) {
+      signOut(auth);
+      toast("此帳號沒有權限");
+      return;
+    }
+    loginEl.classList.add("hidden");
+    appEl.classList.remove("hidden");
+    $("userName").textContent = user.displayName || user.email;
+    if (user.photoURL) $("avatar").src = user.photoURL; else $("avatar").classList.add("hidden");
+
+    const q = query(collection(db, "users", user.uid, "entries"), orderBy("date", "desc"));
+    entriesUnsub = onSnapshot(q, snap => {
+      entries = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderHistory();
+      renderTrend();
+    }, err => { console.error(err); toast("讀取失敗：" + err.code); });
+  });
+
+  buildDims();
+  resetForm();
+</script>
+</body>
+</html>
