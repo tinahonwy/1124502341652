@@ -140,6 +140,17 @@
 
   .actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 12px; }
 
+  .baseline-toggle {
+    display: flex; gap: 10px; align-items: flex-start; cursor: pointer;
+    background: var(--bg); border-radius: 10px; padding: 10px 14px; margin: 10px 0 14px;
+  }
+  .baseline-toggle input { margin-top: 5px; accent-color: var(--accent-2); }
+  .baseline-toggle small { display: block; color: var(--muted); font-size: 0.8rem; }
+  .pill.base { background: var(--accent-2); color: #fff; border-color: var(--accent-2); }
+  .delta-up { color: var(--plus); }
+  .delta-down { color: var(--minus); }
+  .stat .d { font-size: 0.78rem; }
+
   /* 列表 */
   .filter { display: flex; gap: 8px; margin-bottom: 14px; }
   .filter button { padding: 4px 12px; font-size: 0.88rem; border-radius: 999px; }
@@ -268,7 +279,11 @@
 
     <div class="card">
       <h2 id="ckTitle">最近這段時間</h2>
-      <p class="sub">想想最近一兩週，回答「是／有點／不是」。沒遇到的情況就跳過，再點一次可以取消。</p>
+      <label class="baseline-toggle">
+        <input type="checkbox" id="ckBaseline" />
+        <span>設為起點<small>之後的變化都跟這次比較。建議挑情緒平穩的日子做。</small></span>
+      </label>
+      <p class="sub" id="ckSub"></p>
       <div id="stmts"></div>
     </div>
 
@@ -434,6 +449,24 @@
     const v = DIMENSIONS.map(d => dimScore(e, d.key)).filter(x => x !== null);
     return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
   }
+  // 起點：最新一筆標記為起點的檢查
+  function getBaseline() {
+    return sortDesc(entries.filter(e => isCheckin(e) && e.baseline))[0] || null;
+  }
+  function deltaHtml(now, base) {
+    if (now === null || base === null || now === undefined || base === undefined) return "";
+    const d = Math.round(now - base);
+    if (d === 0) return `<span>（與起點持平）</span>`;
+    return `<span class="${d > 0 ? "delta-up" : "delta-down"}">（比起點 ${d > 0 ? "＋" : "－"}${Math.abs(d)}）</span>`;
+  }
+  function ratioText(p, m) {
+    if (!p && !m) return "還沒有紀錄";
+    if (!m) return "目前沒有扣分";
+    if (!p) return "目前只有扣分";
+    const r = p / m;
+    return r >= 1 ? `約 ${r.toFixed(1)} 比 1` : `約 1 比 ${(m / p).toFixed(1)}（扣分較多）`;
+  }
+
   function sortDesc(list) {
     return [...list].sort((a, b) =>
       b.date.localeCompare(a.date) ||
@@ -531,6 +564,19 @@
     $("shuffleBtn").addEventListener("click", newPrompt);
     $("ckSave").addEventListener("click", saveCheckin);
     $("ckCancel").addEventListener("click", resetCheckin);
+    $("ckBaseline").addEventListener("change", () => { baselineTouched = true; paintBaselineText(); });
+  }
+  let baselineTouched = false;
+  function paintBaselineText() {
+    $("ckSub").textContent = $("ckBaseline").checked
+      ? "這次是起點：想想「整體來說，這段關係平常是怎樣」，不要只看最近發生的事。回答「是／有點／不是」，不確定就跳過。"
+      : "想想最近一兩週，回答「是／有點／不是」。沒遇到的情況就跳過，再點一次可以取消。";
+  }
+  // 還沒有起點時，預設勾選
+  function syncBaselineDefault() {
+    if (ckEditingId || baselineTouched) return;
+    $("ckBaseline").checked = !getBaseline();
+    paintBaselineText();
   }
   function newPrompt() {
     let p;
@@ -550,6 +596,8 @@
     $("ckDate").value = today();
     $("ckTitle").textContent = "最近這段時間";
     $("ckCancel").classList.add("hidden");
+    baselineTouched = false;
+    syncBaselineDefault();
     newPrompt();
   }
   function fillCheckin(e) {
@@ -565,6 +613,8 @@
     $("reflection").value = e.reflection || "";
     $("notes").value = e.notes || "";
     $("ckDate").value = e.date;
+    $("ckBaseline").checked = !!e.baseline;
+    paintBaselineText();
     $("ckTitle").textContent = `編輯 ${e.date} 的檢查`;
     $("ckCancel").classList.remove("hidden");
     switchTab("checkin");
@@ -578,6 +628,7 @@
     });
     const data = {
       type: "checkin",
+      baseline: $("ckBaseline").checked,
       answers,
       willing: Number($("willing").value),
       prompt: currentPrompt,
@@ -656,7 +707,8 @@
       <div class="card entry" data-id="${esc(e.id)}">
         <div class="entry-top">
           <span class="entry-date">${esc(e.date)} 檢查</span>
-          <span style="display:flex;gap:6px">
+          <span style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+            ${e.baseline ? `<span class="pill base">起點</span>` : ""}
             <span class="pill">意願 ${e.willing ?? "-"}</span>
             <span class="pill">關係 ${a !== null ? Math.round(a) : "-"}</span>
           </span>
@@ -699,13 +751,16 @@
     const last = sortDesc(entries.filter(isCheckin))[0];
     const since = last ? entries.filter(e => isEvent(e) && e.date > last.date) : entries.filter(isEvent);
     const p = since.filter(e => e.sign === 1).length, m = since.filter(e => e.sign === -1).length;
+    const base = getBaseline();
     if (!last) {
-      $("lastCheckinHint").textContent = "建議每一到兩週做一次，第一次做大概 3 分鐘。";
+      $("lastCheckinHint").textContent = "第一次檢查會設為起點，之後的變化都跟它比。大概 3 分鐘，挑情緒平穩的時候做。";
     } else {
       const d = daysBetween(last.date, today());
       $("lastCheckinHint").textContent =
-        `上次檢查是 ${d === 0 ? "今天" : d + " 天前"}（${last.date}）。之後記了 ${p} 個加分、${m} 個扣分。`;
+        `上次檢查是 ${d === 0 ? "今天" : d + " 天前"}（${last.date}）。之後記了 ${p} 個加分、${m} 個扣分。` +
+        (base ? `　起點：${base.date}` : "　還沒有設定起點。");
     }
+    syncBaselineDefault();
   }
 
   function renderHistory() {
@@ -735,9 +790,14 @@
     const m30 = ev30.filter(e => e.sign === -1).length;
 
     const n = checks.length;
-    const recent = checks.slice(-3);
-    const avgW = n ? checks.reduce((s, e) => s + (e.willing ?? 0), 0) / n : null;
-    const recW = n ? recent.reduce((s, e) => s + (e.willing ?? 0), 0) / recent.length : null;
+    const base = getBaseline();
+    const baseW = base ? (base.willing ?? null) : null;
+    const baseRel = base ? relAvg(base) : null;
+    // 「最近」＝起點之後的最近 3 次（不含起點本身與更早的紀錄）
+    const recent = checks.filter(e => e !== base && (!base || e.date >= base.date)).slice(-3);
+    const recW = recent.length ? recent.reduce((s, e) => s + (e.willing ?? 0), 0) / recent.length : null;
+    const recRelVals = recent.map(relAvg).filter(v => v !== null);
+    const recRel = recRelVals.length ? recRelVals.reduce((a, b) => a + b, 0) / recRelVals.length : null;
 
     // 折線圖
     let chart = `<div class="empty">做過兩次以上的定期檢查，就會出現曲線</div>`;
@@ -753,40 +813,45 @@
       const every = Math.max(1, Math.ceil(n / 6));
       const xl = checks.map((e, i) => i % every === 0 || i === n - 1
         ? `<text x="${x(i)}" y="${H - 8}" text-anchor="middle">${esc(e.date.slice(5))}</text>` : "").join("");
+      const baseLines =
+        (baseW !== null ? `<line x1="${P}" x2="${W - P}" y1="${y(baseW)}" y2="${y(baseW)}" stroke="var(--accent-2)" stroke-dasharray="6 5" opacity="0.6"/>` : "") +
+        (baseRel !== null ? `<line x1="${P}" x2="${W - P}" y1="${y(baseRel)}" y2="${y(baseRel)}" stroke="var(--accent)" stroke-dasharray="6 5" opacity="0.6"/>` : "");
       chart = `
         <svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="趨勢圖">
           ${grid}
+          ${baseLines}
           ${rel.length > 1 ? `<polyline points="${rel.map(p => p.join(",")).join(" ")}" fill="none" stroke="var(--accent)" stroke-width="2" opacity="0.8"/>` : ""}
           <polyline points="${ptsW}" fill="none" stroke="var(--accent-2)" stroke-width="2.5"/>
           ${rel.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="var(--accent)"/>`).join("")}
           ${checks.map((e, i) => `<circle cx="${x(i)}" cy="${y(e.willing ?? 0)}" r="3.5" fill="var(--accent-2)"/>`).join("")}
           ${xl}
         </svg>
-        <div class="legend"><span class="l1">我自己的意願</span><span class="l2">關係分數（檢查平均）</span></div>`;
+        <div class="legend"><span class="l1">我自己的意願</span><span class="l2">關係分數（檢查平均）</span>${base ? `<span style="padding-left:0">虛線＝起點</span>` : ""}</div>`;
     }
 
     // 各面向
+    // 每個面向：長條＝最近（沒有就用起點），橘色標記＝起點
     const rows = DIMENSIONS.map(d => {
-      const all = checks.map(e => dimScore(e, d.key)).filter(v => v !== null);
       const rec = recent.map(e => dimScore(e, d.key)).filter(v => v !== null);
-      const avg = all.length ? all.reduce((a, b) => a + b, 0) / all.length : null;
       const ravg = rec.length ? rec.reduce((a, b) => a + b, 0) / rec.length : null;
+      const bval = base ? dimScore(base, d.key) : null;
+      const shown = ravg ?? bval;
       const dp = ev30.filter(e => e.dim === d.key && e.sign === 1).length;
       const dm = ev30.filter(e => e.dim === d.key && e.sign === -1).length;
-      if (avg === null && !dp && !dm) return "";
+      if (shown === null && !dp && !dm) return "";
       return `
         <div class="bar-row">
           <div class="bar-label">
             <span>${d.name}</span>
             <span>
-              ${dp || dm ? `<span class="ev-count"><span class="p">＋${dp}</span> <span class="m">－${dm}</span></span>` : ""}
-              ${avg !== null ? ` · ${Math.round(avg)}` : ""}
-              ${ravg !== null && n > 1 ? `<span style="color:var(--accent-2)">／近期 ${Math.round(ravg)}</span>` : ""}
+              ${dp || dm ? `<span class="ev-count"><span class="p">＋${dp}</span> <span class="m">－${dm}</span></span> · ` : ""}
+              ${shown !== null ? Math.round(shown) : ""}
+              ${ravg !== null && bval !== null ? deltaHtml(ravg, bval) : (ravg === null && bval !== null ? "<span>（起點）</span>" : "")}
             </span>
           </div>
-          ${avg !== null ? `<div class="bar-track">
-            <div class="bar-fill" style="width:${avg}%"></div>
-            ${ravg !== null && n > 1 ? `<div class="bar-recent" style="left:calc(${ravg}% - 1.5px)"></div>` : ""}
+          ${shown !== null ? `<div class="bar-track">
+            <div class="bar-fill" style="width:${shown}%"></div>
+            ${bval !== null && ravg !== null ? `<div class="bar-recent" style="left:calc(${bval}% - 1.5px)"></div>` : ""}
           </div>` : ""}
         </div>`;
     }).join("");
@@ -802,10 +867,11 @@
     box.innerHTML = `
       <div class="card">
         <div class="stats">
-          <div class="stat"><div class="n">${avgW !== null ? Math.round(avgW) : "-"}</div><div class="t">平均意願</div></div>
-          <div class="stat"><div class="n">${recW !== null ? Math.round(recW) : "-"}</div><div class="t">最近 3 次意願</div></div>
-          <div class="stat"><div class="n"><span style="color:var(--plus)">${p30}</span> / <span style="color:var(--minus)">${m30}</span></div><div class="t">30 天加分 / 扣分</div></div>
+          <div class="stat"><div class="n">${baseW !== null ? baseW : "-"}</div><div class="t">起點意願${base ? `<br>${esc(base.date)}` : "<br>尚未設定"}</div></div>
+          <div class="stat"><div class="n">${recW !== null ? Math.round(recW) : "-"}</div><div class="t">最近 3 次意願</div><div class="d">${deltaHtml(recW, baseW)}</div></div>
+          <div class="stat"><div class="n"><span style="color:var(--plus)">${p30}</span> : <span style="color:var(--minus)">${m30}</span></div><div class="t">30 天加分 : 扣分</div><div class="d">${ratioText(p30, m30)}</div></div>
         </div>
+        ${baseRel !== null && recRel !== null ? `<p class="sub" style="margin:12px 0 0">關係分數：起點 ${Math.round(baseRel)}，最近 ${Math.round(recRel)} ${deltaHtml(recRel, baseRel)}</p>` : ""}
       </div>
       <div class="card">
         <h2>變化曲線</h2>
@@ -813,7 +879,7 @@
       </div>
       <div class="card">
         <h2>各面向</h2>
-        <p class="sub">數字是檢查的平均（0–100），橘色標記是最近 3 次；＋／－ 是最近 30 天記下的事件。</p>
+        <p class="sub">長條和數字是最近 3 次檢查（0–100），橘色標記是起點；＋／－ 是最近 30 天記下的事件。</p>
         ${rows || `<div class="empty">還沒有資料</div>`}
       </div>
       ${lows.length ? `
