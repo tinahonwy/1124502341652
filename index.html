@@ -267,17 +267,14 @@
 
   // ===== 把這裡換成你自己的 Firebase 設定 =====
   const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyBxlFMibr98Jpu14fOkoEtPDIDoIW4k1mQ",
+    authDomain: "tina-ca848.firebaseapp.com",
+    projectId: "tina-ca848",
+    storageBucket: "tina-ca848.firebasestorage.app",
+    messagingSenderId: "563391275176",
+    appId: "1:563391275176:web:fc671772bf6c32b935e29d"
   };
   // ==========================================
-
-  // 只允許這個 Google 帳號使用（改成你自己的 Gmail）
-  const ALLOWED_EMAIL = "your.email@gmail.com";
 
   const fb = initializeApp(firebaseConfig);
   const auth = getAuth(fb);
@@ -605,11 +602,6 @@
       coverEl.classList.add("hidden");
       return;
     }
-    if ((user.email || "").toLowerCase() !== ALLOWED_EMAIL.toLowerCase()) {
-      signOut(auth);
-      toast("此帳號沒有權限");
-      return;
-    }
     loginEl.classList.add("hidden");
     appEl.classList.remove("hidden");
     $("userName").textContent = user.displayName || user.email;
@@ -620,7 +612,16 @@
       entries = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       renderHistory();
       renderTrend();
-    }, err => { console.error(err); toast("讀取失敗：" + err.code); });
+    }, err => {
+      console.error(err);
+      if (err.code === "permission-denied") {
+        // 不是允許的帳號：Firestore 規則擋下，直接登出
+        signOut(auth);
+        toast("此帳號沒有權限");
+      } else {
+        toast("讀取失敗：" + err.code);
+      }
+    });
   });
 
   buildDims();
